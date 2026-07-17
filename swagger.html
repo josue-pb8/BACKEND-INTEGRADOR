@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boutique MODA SYSTEM - API Docs</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+  <style>
+    html { box-sizing: border-box; overflow-y: scroll; }
+    *, *:before, *:after { box-sizing: inherit; }
+    body { margin: 0; background: #fafafa; }
+    .swagger-ui .topbar { display: none; }
+    .swagger-ui .info .title { font-size: 1.8em; }
+    .swagger-ui .scheme-container { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+  <script>
+  const spec = {
+    openapi: "3.0.3",
+    info: {
+      title: "Boutique MODA SYSTEM API",
+      description: "API REST del sistema de gestión integral para boutique. Permite administrar productos, inventario, ventas, apartados, clientes, descuentos y estadísticas.\n\n## Autenticación\nAlgunos endpoints requieren un token JWT. Usá el endpoint `POST /api/auth/login` para obtenerlo y envialo en el header `Authorization: Bearer <token>`.",
+      version: "1.0.0",
+      contact: { name: "Boutique MODA SYSTEM" }
+    },
+    servers: [{ url: "http://localhost:8081", description: "Servidor local" }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "Token JWT obtenido de POST /api/auth/login"
+        }
+      },
+      schemas: {
+        Producto: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            nombre: { type: "string", example: "Falda Midi" },
+            descripcion: { type: "string", example: "Falda midi elegante" },
+            precio: { type: "number", format: "double", example: 299.99 },
+            marca: { type: "string", example: "Zara" },
+            imagenUrl: { type: "string", example: "https://ejemplo.com/imagen.jpg" },
+            categoria: { $ref: "#/components/schemas/Categoria" },
+            activo: { type: "boolean", example: true },
+            fechaCreacion: { type: "string", format: "date-time", example: "2025-07-10T14:30:00" }
+          }
+        },
+        Categoria: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            nombre: { type: "string", example: "Faldas" },
+            descripcion: { type: "string", example: "Faldas para dama" },
+            activa: { type: "boolean", example: true }
+          }
+        },
+        Descuento: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            nombre: { type: "string", example: "Descuento Verano" },
+            porcentaje: { type: "number", format: "double", example: 15.0 },
+            fechaInicio: { type: "string", format: "date", example: "2025-06-01" },
+            fechaFin: { type: "string", format: "date", example: "2025-08-31" },
+            activo: { type: "boolean", example: true }
+          }
+        },
+        Inventario: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            producto: { $ref: "#/components/schemas/Producto" },
+            talla: { type: "string", example: "M" },
+            color: { type: "string", example: "Negro" },
+            stock: { type: "integer", example: 15 },
+            stockMinimo: { type: "integer", example: 5 }
+          }
+        },
+        Cliente: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            usuario: { $ref: "#/components/schemas/Usuario" },
+            nombre: { type: "string", example: "María" },
+            apellido: { type: "string", example: "García" },
+            email: { type: "string", example: "maria@email.com" },
+            telefono: { type: "string", example: "5551234567" },
+            direccion: { type: "string", example: "Calle Principal 123" },
+            fechaNacimiento: { type: "string", format: "date", example: "1995-05-15" },
+            fechaRegistro: { type: "string", format: "date-time" }
+          }
+        },
+        Usuario: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 3 },
+            nombreUsuario: { type: "string", example: "maria123" },
+            rol: { $ref: "#/components/schemas/Rol" },
+            activo: { type: "boolean", example: true },
+            fechaCreacion: { type: "string", format: "date-time" }
+          }
+        },
+        Rol: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            nombre: { type: "string", example: "ADMIN" }
+          }
+        },
+        MetodoPago: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            nombre: { type: "string", example: "Efectivo" }
+          }
+        },
+        DetalleVenta: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            producto: { $ref: "#/components/schemas/Producto" },
+            cantidad: { type: "integer", example: 2 },
+            precioUnitario: { type: "number", format: "double", example: 299.99 },
+            subtotal: { type: "number", format: "double", example: 599.98 }
+          }
+        },
+        Venta: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            cliente: { $ref: "#/components/schemas/Cliente" },
+            empleado: { $ref: "#/components/schemas/Usuario" },
+            metodoPago: { $ref: "#/components/schemas/MetodoPago" },
+            descuento: { $ref: "#/components/schemas/Descuento" },
+            total: { type: "number", format: "double", example: 599.98 },
+            fechaVenta: { type: "string", format: "date-time" },
+            detalles: { type: "array", items: { $ref: "#/components/schemas/DetalleVenta" } }
+          }
+        },
+        DetalleApartado: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            producto: { $ref: "#/components/schemas/Producto" },
+            cantidad: { type: "integer", example: 2 },
+            precioUnitario: { type: "number", format: "double", example: 299.99 },
+            subtotal: { type: "number", format: "double", example: 599.98 }
+          }
+        },
+        Abono: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            monto: { type: "number", format: "double", example: 200.0 },
+            fechaAbono: { type: "string", format: "date-time" }
+          }
+        },
+        Apartado: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            cliente: { $ref: "#/components/schemas/Cliente" },
+            empleado: { $ref: "#/components/schemas/Usuario" },
+            total: { type: "number", format: "double", example: 599.98 },
+            abonado: { type: "number", format: "double", example: 200.0 },
+            pendiente: { type: "number", format: "double", example: 399.98 },
+            estado: { type: "string", enum: ["ACTIVO", "PAGADO", "CANCELADO"], example: "ACTIVO" },
+            fechaApartado: { type: "string", format: "date-time" },
+            detalles: { type: "array", items: { $ref: "#/components/schemas/DetalleApartado" } },
+            abonos: { type: "array", items: { $ref: "#/components/schemas/Abono" } }
+          }
+        },
+        CarritoItem: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            cliente: { $ref: "#/components/schemas/Cliente" },
+            producto: { $ref: "#/components/schemas/Producto" },
+            cantidad: { type: "integer", example: 2 },
+            fechaAgregado: { type: "string", format: "date-time" }
+          }
+        }
+      }
+    },
+    paths: {
+      "/api/auth/login": {
+        post: {
+          tags: ["Auth"],
+          summary: "Iniciar sesión",
+          description: "Autentica un usuario y devuelve un token JWT.",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["nombreUsuario", "contrasena"],
+                  properties: {
+                    nombreUsuario: { type: "string", example: "admin" },
+                    contrasena: { type: "string", example: "admin123" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Login exitoso", content: { "application/json": { schema: { type: "object", properties: { token: { type: "string", description: "Token JWT" } } } } } },
+            "401": { description: "Credenciales incorrectas", content: { "application/json": { schema: { type: "object", properties: { error: { type: "string", example: "Credenciales incorrectas" } } } } } }
+          }
+        }
+      },
+      "/api/auth/logout": {
+        post: {
+          tags: ["Auth"],
+          summary: "Cerrar sesión",
+          description: "Cierra la sesión del usuario autenticado.",
+          security: [{ bearerAuth: [] }],
+          responses: {
+            "200": { description: "Sesión cerrada", content: { "application/json": { schema: { type: "object", properties: { mensaje: { type: "string", example: "Sesión cerrada correctamente" } } } } } }
+          }
+        }
+      },
+      "/api/auth/recuperar-contrasena": {
+        post: {
+          tags: ["Auth"],
+          summary: "Recuperar contraseña",
+          description: "Actualiza la contraseña de un usuario.",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["nombreUsuario", "nuevaContrasena"],
+                  properties: {
+                    nombreUsuario: { type: "string", example: "admin" },
+                    nuevaContrasena: { type: "string", example: "nuevaClave123" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Contraseña actualizada", content: { "application/json": { schema: { type: "object", properties: { mensaje: { type: "string", example: "Contraseña actualizada correctamente" } } } } } },
+            "404": { description: "Usuario no encontrado", content: { "application/json": { schema: { type: "object", properties: { error: { type: "string", example: "Usuario no encontrado" } } } } } }
+          }
+        }
+      },
+      "/api/productos": {
+        get: {
+          tags: ["Productos"],
+          summary: "Listar todos los productos",
+          description: "Obtiene la lista de todos los productos activos.",
+          responses: {
+            "200": { description: "Lista de productos", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Producto" } } } } }
+          }
+        },
+        post: {
+          tags: ["Productos"],
+          summary: "Registrar un nuevo producto",
+          description: "Crea un nuevo producto. Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["nombre", "precio", "categoria"],
+                  properties: {
+                    nombre: { type: "string", example: "Falda Midi" },
+                    descripcion: { type: "string", example: "Falda midi elegante" },
+                    precio: { type: "number", example: 299.99 },
+                    marca: { type: "string", example: "Zara" },
+                    imagenUrl: { type: "string", example: "https://ejemplo.com/imagen.jpg" },
+                    categoria: { type: "object", properties: { id: { type: "integer", example: 1 } } },
+                    activo: { type: "boolean", example: true }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "201": { description: "Producto creado", content: { "application/json": { schema: { $ref: "#/components/schemas/Producto" } } } }
+          }
+        }
+      },
+      "/api/productos/buscar": {
+        get: {
+          tags: ["Productos"],
+          summary: "Buscar productos",
+          description: "Busca productos por nombre, categoría o marca. Todos los parámetros son opcionales.",
+          parameters: [
+            { name: "nombre", in: "query", schema: { type: "string" }, description: "Nombre del producto (búsqueda parcial)" },
+            { name: "categoriaId", in: "query", schema: { type: "integer" }, description: "ID de la categoría" },
+            { name: "marca", in: "query", schema: { type: "string" }, description: "Marca del producto (búsqueda parcial)" }
+          ],
+          responses: {
+            "200": { description: "Resultados de búsqueda", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Producto" } } } } }
+          }
+        }
+      },
+      "/api/productos/filtrar": {
+        get: {
+          tags: ["Productos"],
+          summary: "Filtrar productos",
+          description: "Filtra productos por talla, color o rango de precio. Todos los parámetros son opcionales.",
+          parameters: [
+            { name: "talla", in: "query", schema: { type: "string" }, example: "M" },
+            { name: "color", in: "query", schema: { type: "string" }, example: "Negro" },
+            { name: "precioMin", in: "query", schema: { type: "number" }, example: 100 },
+            { name: "precioMax", in: "query", schema: { type: "number" }, example: 500 }
+          ],
+          responses: {
+            "200": { description: "Productos filtrados", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Producto" } } } } }
+          }
+        }
+      },
+      "/api/productos/{id}": {
+        get: {
+          tags: ["Productos"],
+          summary: "Obtener producto por ID",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Producto encontrado", content: { "application/json": { schema: { $ref: "#/components/schemas/Producto" } } } },
+            "404": { description: "Producto no encontrado", content: { "application/json": { schema: { type: "object", properties: { error: { type: "string" } } } } } }
+          }
+        },
+        put: {
+          tags: ["Productos"],
+          summary: "Editar un producto",
+          description: "Actualiza la información de un producto. Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    nombre: { type: "string" },
+                    descripcion: { type: "string" },
+                    precio: { type: "number" },
+                    marca: { type: "string" },
+                    imagenUrl: { type: "string" },
+                    categoria: { type: "object", properties: { id: { type: "integer" } } }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Producto actualizado", content: { "application/json": { schema: { $ref: "#/components/schemas/Producto" } } } },
+            "404": { description: "Producto no encontrado" }
+          }
+        },
+        delete: {
+          tags: ["Productos"],
+          summary: "Eliminar un producto",
+          description: "Elimina lógicamente un producto (soft delete). Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Producto eliminado", content: { "application/json": { schema: { type: "object", properties: { mensaje: { type: "string", example: "Producto eliminado correctamente" } } } } } },
+            "404": { description: "Producto no encontrado" }
+          }
+        }
+      },
+      "/api/categorias": {
+        get: {
+          tags: ["Categorías"],
+          summary: "Listar todas las categorías",
+          responses: {
+            "200": { description: "Lista de categorías", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Categoria" } } } } }
+          }
+        },
+        post: {
+          tags: ["Categorías"],
+          summary: "Registrar una nueva categoría",
+          description: "Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["nombre"],
+                  properties: {
+                    nombre: { type: "string", example: "Vestidos" },
+                    descripcion: { type: "string", example: "Vestidos para dama" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "201": { description: "Categoría creada", content: { "application/json": { schema: { $ref: "#/components/schemas/Categoria" } } } }
+          }
+        }
+      },
+      "/api/categorias/{id}": {
+        get: {
+          tags: ["Categorías"],
+          summary: "Obtener categoría por ID",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Categoría encontrada", content: { "application/json": { schema: { $ref: "#/components/schemas/Categoria" } } } },
+            "404": { description: "Categoría no encontrada" }
+          }
+        },
+        put: {
+          tags: ["Categorías"],
+          summary: "Modificar una categoría",
+          description: "Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    nombre: { type: "string" },
+                    descripcion: { type: "string" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Categoría actualizada", content: { "application/json": { schema: { $ref: "#/components/schemas/Categoria" } } } },
+            "404": { description: "Categoría no encontrada" }
+          }
+        },
+        delete: {
+          tags: ["Categorías"],
+          summary: "Eliminar una categoría",
+          description: "Soft delete. Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Categoría eliminada", content: { "application/json": { schema: { type: "object", properties: { mensaje: { type: "string", example: "Categoría eliminada correctamente" } } } } } },
+            "404": { description: "Categoría no encontrada" }
+          }
+        }
+      },
+      "/api/descuentos": {
+        get: {
+          tags: ["Descuentos"],
+          summary: "Listar todos los descuentos",
+          responses: {
+            "200": { description: "Lista de descuentos", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Descuento" } } } } }
+          }
+        },
+        post: {
+          tags: ["Descuentos"],
+          summary: "Registrar un nuevo descuento",
+          description: "Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["nombre", "porcentaje", "fechaInicio", "fechaFin"],
+                  properties: {
+                    nombre: { type: "string", example: "Descuento Verano" },
+                    porcentaje: { type: "number", example: 15.0 },
+                    fechaInicio: { type: "string", format: "date", example: "2025-06-01" },
+                    fechaFin: { type: "string", format: "date", example: "2025-08-31" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "201": { description: "Descuento creado", content: { "application/json": { schema: { $ref: "#/components/schemas/Descuento" } } } }
+          }
+        }
+      },
+      "/api/descuentos/activos": {
+        get: {
+          tags: ["Descuentos"],
+          summary: "Listar descuentos activos",
+          description: "Devuelve solo descuentos vigentes (activo=true y dentro del rango de fechas).",
+          responses: {
+            "200": { description: "Descuentos activos", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Descuento" } } } } }
+          }
+        }
+      },
+      "/api/descuentos/{id}": {
+        get: {
+          tags: ["Descuentos"],
+          summary: "Obtener descuento por ID",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Descuento encontrado", content: { "application/json": { schema: { $ref: "#/components/schemas/Descuento" } } } },
+            "404": { description: "Descuento no encontrado" }
+          }
+        },
+        put: {
+          tags: ["Descuentos"],
+          summary: "Editar un descuento",
+          description: "Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    nombre: { type: "string" },
+                    porcentaje: { type: "number" },
+                    fechaInicio: { type: "string", format: "date" },
+                    fechaFin: { type: "string", format: "date" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Descuento actualizado", content: { "application/json": { schema: { $ref: "#/components/schemas/Descuento" } } } },
+            "404": { description: "Descuento no encontrado" }
+          }
+        }
+      },
+      "/api/descuentos/{id}/finalizar": {
+        put: {
+          tags: ["Descuentos"],
+          summary: "Finalizar un descuento",
+          description: "Marca un descuento como inactivo. Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Descuento finalizado", content: { "application/json": { schema: { type: "object", properties: { mensaje: { type: "string", example: "Descuento finalizado correctamente" } } } } } },
+            "404": { description: "Descuento no encontrado" }
+          }
+        }
+      },
+      "/api/inventario": {
+        get: {
+          tags: ["Inventario"],
+          summary: "Consultar inventario completo",
+          responses: {
+            "200": { description: "Lista de inventario", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Inventario" } } } } }
+          }
+        },
+        post: {
+          tags: ["Inventario"],
+          summary: "Registrar un nuevo registro de inventario",
+          description: "Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["producto", "talla", "color", "stock"],
+                  properties: {
+                    producto: { type: "object", properties: { id: { type: "integer", example: 1 } } },
+                    talla: { type: "string", example: "M" },
+                    color: { type: "string", example: "Negro" },
+                    stock: { type: "integer", example: 10 },
+                    stockMinimo: { type: "integer", example: 5 }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "201": { description: "Inventario creado", content: { "application/json": { schema: { $ref: "#/components/schemas/Inventario" } } } }
+          }
+        }
+      },
+      "/api/inventario/alertas-stock": {
+        get: {
+          tags: ["Inventario"],
+          summary: "Alertas de stock bajo",
+          description: "Productos con stock por debajo del mínimo. Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          responses: {
+            "200": { description: "Productos con stock bajo", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Inventario" } } } } }
+          }
+        }
+      },
+      "/api/inventario/producto/{productoId}": {
+        get: {
+          tags: ["Inventario"],
+          summary: "Consultar inventario de un producto",
+          description: "Todas las variantes (talla/color) de un producto específico.",
+          parameters: [
+            { name: "productoId", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Variantes del producto", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Inventario" } } } } }
+          }
+        }
+      },
+      "/api/inventario/{id}": {
+        put: {
+          tags: ["Inventario"],
+          summary: "Actualizar stock",
+          description: "Actualiza el stock de un registro de inventario. Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["stock"],
+                  properties: {
+                    stock: { type: "integer", example: 20 }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Stock actualizado", content: { "application/json": { schema: { $ref: "#/components/schemas/Inventario" } } } },
+            "404": { description: "Registro de inventario no encontrado" }
+          }
+        }
+      },
+      "/api/ventas": {
+        get: {
+          tags: ["Ventas"],
+          summary: "Listar todas las ventas",
+          description: "Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          responses: {
+            "200": { description: "Lista de ventas", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Venta" } } } } }
+          }
+        },
+        post: {
+          tags: ["Ventas"],
+          summary: "Registrar una nueva venta",
+          description: "Registra una venta con sus detalles. Requiere rol EMPLEADO o superior. Descuenta stock automáticamente.",
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["empleadoId", "metodoPagoId", "detalles"],
+                  properties: {
+                    empleadoId: { type: "integer", example: 2, description: "ID del empleado que realiza la venta" },
+                    metodoPagoId: { type: "integer", example: 1, description: "ID del método de pago" },
+                    clienteId: { type: "integer", example: 1, description: "ID del cliente (opcional)" },
+                    descuentoId: { type: "integer", example: null, description: "ID del descuento (opcional)" },
+                    detalles: {
+                      type: "array",
+                      minItems: 1,
+                      items: {
+                        type: "object",
+                        required: ["productoId", "cantidad", "precioUnitario"],
+                        properties: {
+                          productoId: { type: "integer", example: 1 },
+                          cantidad: { type: "integer", example: 2 },
+                          precioUnitario: { type: "number", example: 299.99 }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "201": { description: "Venta registrada", content: { "application/json": { schema: { $ref: "#/components/schemas/Venta" } } } },
+            "400": { description: "Error de validación", content: { "application/json": { schema: { type: "object", properties: { error: { type: "string" } } } } } }
+          }
+        }
+      },
+      "/api/ventas/dia": {
+        get: {
+          tags: ["Ventas"],
+          summary: "Ventas del día",
+          description: "Consulta las ventas de un día específico. Solo ADMIN. Si no se envía fecha, usa la fecha actual.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "fecha", in: "query", schema: { type: "string", format: "date" }, example: "2025-07-10", description: "Formato YYYY-MM-DD" }
+          ],
+          responses: {
+            "200": { description: "Ventas del día", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Venta" } } } } }
+          }
+        }
+      },
+      "/api/ventas/historial/{empleadoId}": {
+        get: {
+          tags: ["Ventas"],
+          summary: "Historial de ventas de un empleado",
+          description: "Requiere autenticación.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "empleadoId", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Historial de ventas", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Venta" } } } } }
+          }
+        }
+      },
+      "/api/ventas/cliente/{clienteId}": {
+        get: {
+          tags: ["Ventas"],
+          summary: "Historial de compras de un cliente",
+          description: "Requiere autenticación.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "clienteId", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Historial de compras", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Venta" } } } } }
+          }
+        }
+      },
+      "/api/ventas/{id}": {
+        get: {
+          tags: ["Ventas"],
+          summary: "Obtener venta por ID",
+          description: "Detalle completo de una venta con sus productos, cliente y método de pago.",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Venta encontrada", content: { "application/json": { schema: { $ref: "#/components/schemas/Venta" } } } },
+            "404": { description: "Venta no encontrada" }
+          }
+        }
+      },
+      "/api/clientes": {
+        get: {
+          tags: ["Clientes"],
+          summary: "Listar todos los clientes",
+          description: "Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          responses: {
+            "200": { description: "Lista de clientes", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Cliente" } } } } }
+          }
+        },
+        post: {
+          tags: ["Clientes"],
+          summary: "Registrar un nuevo cliente",
+          description: "Crea un usuario con rol CLIENTE y su perfil de cliente. No requiere autenticación.",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["nombreUsuario", "contrasena", "nombre", "apellido"],
+                  properties: {
+                    nombreUsuario: { type: "string", example: "maria123" },
+                    contrasena: { type: "string", example: "clave123" },
+                    nombre: { type: "string", example: "María" },
+                    apellido: { type: "string", example: "García" },
+                    email: { type: "string", example: "maria@email.com" },
+                    telefono: { type: "string", example: "5551234567" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "201": { description: "Cliente registrado", content: { "application/json": { schema: { $ref: "#/components/schemas/Cliente" } } } }
+          }
+        }
+      },
+      "/api/clientes/{id}": {
+        get: {
+          tags: ["Clientes"],
+          summary: "Obtener cliente por ID",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Cliente encontrado", content: { "application/json": { schema: { $ref: "#/components/schemas/Cliente" } } } },
+            "404": { description: "Cliente no encontrado" }
+          }
+        },
+        put: {
+          tags: ["Clientes"],
+          summary: "Actualizar datos de un cliente",
+          description: "Actualiza nombre, apellido, email, teléfono y dirección.",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    nombre: { type: "string" },
+                    apellido: { type: "string" },
+                    email: { type: "string" },
+                    telefono: { type: "string" },
+                    direccion: { type: "string" },
+                    fechaNacimiento: { type: "string", format: "date" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Cliente actualizado", content: { "application/json": { schema: { $ref: "#/components/schemas/Cliente" } } } },
+            "404": { description: "Cliente no encontrado" }
+          }
+        }
+      },
+      "/api/apartados": {
+        get: {
+          tags: ["Apartados"],
+          summary: "Listar todos los apartados",
+          responses: {
+            "200": { description: "Lista de apartados", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Apartado" } } } } }
+          }
+        },
+        post: {
+          tags: ["Apartados"],
+          summary: "Registrar un nuevo apartado",
+          description: "Crea un apartado con sus productos. Requiere rol EMPLEADO o superior.",
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["clienteId", "empleadoId", "detalles"],
+                  properties: {
+                    clienteId: { type: "integer", example: 1 },
+                    empleadoId: { type: "integer", example: 2 },
+                    detalles: {
+                      type: "array",
+                      minItems: 1,
+                      items: {
+                        type: "object",
+                        required: ["productoId", "cantidad", "precioUnitario"],
+                        properties: {
+                          productoId: { type: "integer", example: 1 },
+                          cantidad: { type: "integer", example: 2 },
+                          precioUnitario: { type: "number", example: 299.99 }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "201": { description: "Apartado creado", content: { "application/json": { schema: { $ref: "#/components/schemas/Apartado" } } } },
+            "400": { description: "Error de validación" }
+          }
+        }
+      },
+      "/api/apartados/cliente/{clienteId}": {
+        get: {
+          tags: ["Apartados"],
+          summary: "Apartados de un cliente",
+          parameters: [
+            { name: "clienteId", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Apartados del cliente", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Apartado" } } } } }
+          }
+        }
+      },
+      "/api/apartados/{id}": {
+        get: {
+          tags: ["Apartados"],
+          summary: "Obtener apartado por ID",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Apartado encontrado", content: { "application/json": { schema: { $ref: "#/components/schemas/Apartado" } } } },
+            "404": { description: "Apartado no encontrado" }
+          }
+        }
+      },
+      "/api/apartados/{id}/abono": {
+        put: {
+          tags: ["Apartados"],
+          summary: "Registrar un abono",
+          description: "Registra un abono a un apartado. Si el pendiente llega a 0, el estado cambia a PAGADO.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["monto"],
+                  properties: {
+                    monto: { type: "number", example: 200.0 }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Abono registrado", content: { "application/json": { schema: { $ref: "#/components/schemas/Apartado" } } } },
+            "400": { description: "Falta el campo monto" },
+            "404": { description: "Apartado no encontrado" }
+          }
+        }
+      },
+      "/api/carrito/{clienteId}": {
+        get: {
+          tags: ["Carrito"],
+          summary: "Ver carrito de compras",
+          description: "Lista los productos en el carrito de un cliente.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "clienteId", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Carrito del cliente", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/CarritoItem" } } } } }
+          }
+        }
+      },
+      "/api/carrito/{clienteId}/agregar": {
+        post: {
+          tags: ["Carrito"],
+          summary: "Agregar producto al carrito",
+          description: "Si el producto ya está en el carrito, incrementa la cantidad.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "clienteId", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["productoId"],
+                  properties: {
+                    productoId: { type: "integer", example: 1 },
+                    cantidad: { type: "integer", example: 2, default: 1 }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "201": { description: "Producto agregado", content: { "application/json": { schema: { $ref: "#/components/schemas/CarritoItem" } } } },
+            "400": { description: "Falta el campo productoId" },
+            "404": { description: "Cliente o producto no encontrado" }
+          }
+        }
+      },
+      "/api/carrito/{clienteId}/actualizar": {
+        put: {
+          tags: ["Carrito"],
+          summary: "Actualizar cantidad en el carrito",
+          description: "Si la cantidad es 0, el producto se elimina del carrito.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "clienteId", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["productoId", "cantidad"],
+                  properties: {
+                    productoId: { type: "integer", example: 1 },
+                    cantidad: { type: "integer", example: 3 }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Carrito actualizado", content: { "application/json": { schema: { $ref: "#/components/schemas/CarritoItem" } } } },
+            "400": { description: "Faltan campos: productoId, cantidad" }
+          }
+        }
+      },
+      "/api/carrito/{clienteId}/eliminar/{productoId}": {
+        delete: {
+          tags: ["Carrito"],
+          summary: "Eliminar producto del carrito",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "clienteId", in: "path", required: true, schema: { type: "integer" } },
+            { name: "productoId", in: "path", required: true, schema: { type: "integer" } }
+          ],
+          responses: {
+            "200": { description: "Producto eliminado", content: { "application/json": { schema: { type: "object", properties: { mensaje: { type: "string", example: "Producto eliminado del carrito" } } } } } },
+            "404": { description: "Producto no encontrado en el carrito" }
+          }
+        }
+      },
+      "/api/estadisticas/ventas-mensuales": {
+        get: {
+          tags: ["Estadísticas"],
+          summary: "Ventas mensuales",
+          description: "Resumen de ventas del mes. Solo ADMIN. Si no se envían parámetros, usa el mes y año actuales.",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "mes", in: "query", schema: { type: "integer" }, example: 7, description: "Mes (1-12)" },
+            { name: "anio", in: "query", schema: { type: "integer" }, example: 2025, description: "Año" }
+          ],
+          responses: {
+            "200": { description: "Resumen mensual", content: { "application/json": { schema: { type: "object", properties: { mes: { type: "integer" }, anio: { type: "integer" }, totalVentas: { type: "integer" }, montoTotal: { type: "number" } } } } } }
+          }
+        }
+      },
+      "/api/estadisticas/productos-mas-vendidos": {
+        get: {
+          tags: ["Estadísticas"],
+          summary: "Productos más vendidos",
+          description: "Top 10 productos con mayor cantidad vendida. Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          responses: {
+            "200": { description: "Top productos", content: { "application/json": { schema: { type: "array", items: { type: "object", properties: { producto: { type: "string" }, totalVendidos: { type: "integer" } } } } } } }
+          }
+        }
+      },
+      "/api/estadisticas/ganancias": {
+        get: {
+          tags: ["Estadísticas"],
+          summary: "Ganancias del negocio",
+          description: "Total de ventas y monto acumulado. Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          responses: {
+            "200": { description: "Resumen de ganancias", content: { "application/json": { schema: { type: "object", properties: { totalVentas: { type: "integer" }, montoTotal: { type: "number" } } } } } }
+          }
+        }
+      },
+      "/api/estadisticas/metodos-pago": {
+        get: {
+          tags: ["Estadísticas"],
+          summary: "Métodos de pago",
+          description: "Distribución de uso de métodos de pago. Solo ADMIN.",
+          security: [{ bearerAuth: [] }],
+          responses: {
+            "200": { description: "Métodos de pago", content: { "application/json": { schema: { type: "array", items: { type: "object", properties: { metodoPago: { type: "string" }, cantidad: { type: "integer" }, total: { type: "number" } } } } } } }
+          }
+        }
+      }
+    },
+    tags: [
+      { name: "Auth", description: "Autenticación y gestión de sesión" },
+      { name: "Productos", description: "CRUD de productos, búsqueda y filtrado" },
+      { name: "Categorías", description: "Gestión de categorías de productos" },
+      { name: "Descuentos", description: "Gestión de descuentos y promociones" },
+      { name: "Inventario", description: "Control de stock por talla y color" },
+      { name: "Ventas", description: "Registro y consulta de ventas" },
+      { name: "Clientes", description: "Gestión de clientes" },
+      { name: "Apartados", description: "Sistema de apartados con abonos" },
+      { name: "Carrito", description: "Carrito de compras por cliente" },
+      { name: "Estadísticas", description: "Reportes y analíticas del negocio (Solo ADMIN)" }
+    ]
+  };
+
+  SwaggerUIBundle({
+    spec: spec,
+    dom_id: '#swagger-ui',
+    deepLinking: true,
+    presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+    layout: "BaseLayout"
+  });
+  </script>
+</body>
+</html>

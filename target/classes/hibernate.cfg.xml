@@ -1,0 +1,30 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/boutique_moda</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password"></property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <mapping class="com.boutique.models.Usuario"/>
+        <mapping class="com.boutique.models.Producto"/>
+        <mapping class="com.boutique.models.Categoria"/>
+        <mapping class="com.boutique.models.Descuento"/>
+        <mapping class="com.boutique.models.Inventario"/>
+        <mapping class="com.boutique.models.Venta"/>
+        <mapping class="com.boutique.models.DetalleVenta"/>
+        <mapping class="com.boutique.models.Cliente"/>
+        <mapping class="com.boutique.models.Apartado"/>
+        <mapping class="com.boutique.models.DetalleApartado"/>
+        <mapping class="com.boutique.models.Carrito"/>
+        <mapping class="com.boutique.models.MetodoPago"/>
+        <mapping class="com.boutique.models.Rol"/>
+        <mapping class="com.boutique.models.Abono"/>
+    </session-factory>
+</hibernate-configuration>
