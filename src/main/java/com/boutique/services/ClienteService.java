@@ -27,13 +27,16 @@ public class ClienteService {
         return clienteRepository.buscarPorUsuarioId(usuarioId);
     }
 
-    public Cliente registrar(String nombreUsuario, String contrasena, String nombre, String apellido, String email, String telefono) {
+    public Cliente registrar(String nombreUsuario, String contrasena, String nombre, String apellido, String email, String telefono, String perfil) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Rol rolCliente = session.createQuery("FROM Rol r WHERE r.nombre = 'CLIENTE'", Rol.class)
-                    .uniqueResult();
-            if (rolCliente == null) {
-                throw new RuntimeException("Rol CLIENTE no encontrado en la base de datos");
-            }
+//            Rol rolCliente = session.createQuery("FROM Rol r WHERE r.nombre = 'CLIENTE'", Rol.class)
+//                    .uniqueResult();
+//            if (rolCliente == null) {
+//                throw new RuntimeException("Rol CLIENTE no encontrado en la base de datos");
+//            }
+
+            Rol rolCliente = clienteRepository.buscarRolId(Integer.parseInt(perfil));
+
 
             Usuario usuario = new Usuario(nombreUsuario, contrasena, rolCliente);
 
@@ -67,5 +70,11 @@ public class ClienteService {
         usuario.setContrasena(nuevaContrasena);
         usuarioRepository.actualizar(usuario);
         return true;
+    }
+
+    public List<Rol> listarPerfiles() {
+
+        return clienteRepository.listarPerfiles();
+
     }
 }
