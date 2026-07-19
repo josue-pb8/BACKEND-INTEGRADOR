@@ -15,6 +15,7 @@ public class Usuario {
     private String nombreUsuario;
 
     @Column(nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private String contrasena;
 
     @ManyToOne

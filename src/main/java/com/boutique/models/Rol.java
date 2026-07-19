@@ -19,6 +19,14 @@ public class Rol {
         this.nombre = nombre;
     }
 
+    public Rol(int id) {
+        this.id = id;
+    }
+    public Rol(int id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

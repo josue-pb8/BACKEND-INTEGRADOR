@@ -12,22 +12,30 @@ public class VentaRepository {
 
     public List<Venta> listarTodas() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Venta ORDER BY fechaVenta DESC", Venta.class).list();
+            return session.createQuery(
+                "SELECT v FROM Venta v LEFT JOIN FETCH v.detalles dv LEFT JOIN FETCH dv.producto " +
+                "LEFT JOIN FETCH v.cliente LEFT JOIN FETCH v.empleado LEFT JOIN FETCH v.metodoPago " +
+                "LEFT JOIN FETCH v.descuento ORDER BY v.fechaVenta DESC", Venta.class).list();
         }
     }
 
     public Optional<Venta> buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Venta venta = session.get(Venta.class, id);
-            return Optional.ofNullable(venta);
+            return session.createQuery(
+                "SELECT v FROM Venta v LEFT JOIN FETCH v.detalles dv LEFT JOIN FETCH dv.producto " +
+                "LEFT JOIN FETCH v.cliente LEFT JOIN FETCH v.empleado LEFT JOIN FETCH v.metodoPago " +
+                "LEFT JOIN FETCH v.descuento WHERE v.id = :id", Venta.class)
+                .setParameter("id", id)
+                .uniqueResultOptional();
         }
     }
 
     public List<Venta> ventasPorDia(LocalDateTime inicio, LocalDateTime fin) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                "FROM Venta WHERE fechaVenta BETWEEN :inicio AND :fin ORDER BY fechaVenta DESC",
-                Venta.class)
+                "SELECT v FROM Venta v LEFT JOIN FETCH v.detalles dv LEFT JOIN FETCH dv.producto " +
+                "LEFT JOIN FETCH v.cliente LEFT JOIN FETCH v.empleado LEFT JOIN FETCH v.metodoPago " +
+                "WHERE v.fechaVenta BETWEEN :inicio AND :fin ORDER BY v.fechaVenta DESC", Venta.class)
                 .setParameter("inicio", inicio)
                 .setParameter("fin", fin)
                 .list();
@@ -37,8 +45,9 @@ public class VentaRepository {
     public List<Venta> ventasPorEmpleado(int empleadoId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                "FROM Venta WHERE empleado.id = :empleadoId ORDER BY fechaVenta DESC",
-                Venta.class)
+                "SELECT v FROM Venta v LEFT JOIN FETCH v.detalles dv LEFT JOIN FETCH dv.producto " +
+                "LEFT JOIN FETCH v.cliente LEFT JOIN FETCH v.empleado LEFT JOIN FETCH v.metodoPago " +
+                "WHERE v.empleado.id = :empleadoId ORDER BY v.fechaVenta DESC", Venta.class)
                 .setParameter("empleadoId", empleadoId)
                 .list();
         }
@@ -47,8 +56,9 @@ public class VentaRepository {
     public List<Venta> ventasPorCliente(int clienteId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                "FROM Venta WHERE cliente.id = :clienteId ORDER BY fechaVenta DESC",
-                Venta.class)
+                "SELECT v FROM Venta v LEFT JOIN FETCH v.detalles dv LEFT JOIN FETCH dv.producto " +
+                "LEFT JOIN FETCH v.cliente LEFT JOIN FETCH v.empleado LEFT JOIN FETCH v.metodoPago " +
+                "WHERE v.cliente.id = :clienteId ORDER BY v.fechaVenta DESC", Venta.class)
                 .setParameter("clienteId", clienteId)
                 .list();
         }

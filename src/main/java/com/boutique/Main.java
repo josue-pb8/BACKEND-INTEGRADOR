@@ -102,9 +102,12 @@ public class Main {
 
                     path("clientes", () -> {
                         get(withAuth(new JwtMiddleware("ADMIN"), clienteController::listar));
+                        get("/por-usuario/{usuarioId}", clienteController::buscarPorUsuarioId);
                         get("/{id}", clienteController::buscarPorId);
                         post(clienteController::registrar);
                         put("/{id}", clienteController::actualizar);
+
+                        post("/roles", clienteController::perfiles);
                     });
 
                     path("apartados", () -> {
@@ -129,11 +132,16 @@ public class Main {
                                 estadisticaController::productosMasVendidos));
                         get("/ganancias", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::ganancias));
                         get("/metodos-pago", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::metodosPago));
+                        get("/clientes-nuevos", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::clientesNuevos));
+                        get("/apartados-activos", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::apartadosActivos));
+                        get("/ventas-recientes", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::ventasRecientes));
+                        get("/ventas-semanales", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::ventasSemanales));
+                        get("/ganancias-semanales", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::gananciasSemanales));
                     });
                 });
             });
         }).start(8081);
 
-        System.out.println("Servidor Boutique MODA SYSTEM iniciado en http://localhost:8080");
+        System.out.println("Servidor Boutique MODA SYSTEM iniciado en http://localhost:8081");
     }
 }

@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "apartados")
@@ -33,7 +35,7 @@ public class Apartado {
     private List<DetalleApartado> detalles = new ArrayList<>();
 
     @OneToMany(mappedBy = "apartado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Abono> abonos = new ArrayList<>();
+    private Set<Abono> abonos = new LinkedHashSet<>();
 
     public enum EstadoApartado {
         ACTIVO, PAGADO, CANCELADO
@@ -59,8 +61,8 @@ public class Apartado {
     public List<DetalleApartado> getDetalles() { return detalles; }
     public void setDetalles(List<DetalleApartado> detalles) { this.detalles = detalles; }
 
-    public List<Abono> getAbonos() { return abonos; }
-    public void setAbonos(List<Abono> abonos) { this.abonos = abonos; }
+    public Set<Abono> getAbonos() { return abonos; }
+    public void setAbonos(Set<Abono> abonos) { this.abonos = abonos; }
 
     public BigDecimal getTotal() {
         return detalles.stream()

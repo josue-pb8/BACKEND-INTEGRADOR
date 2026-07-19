@@ -2,6 +2,7 @@ package com.boutique.repositories;
 
 import com.boutique.config.HibernateUtil;
 import com.boutique.models.Cliente;
+import com.boutique.models.Rol;
 import com.boutique.models.Usuario;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -70,6 +71,19 @@ public class ClienteRepository {
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        }
+    }
+
+    public List<Rol> listarPerfiles() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("FROM Rol", Rol.class).list();
+        }
+    }
+
+    public Rol buscarRolId(int id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Rol r_ = session.get(Rol.class, id);
+            return r_;
         }
     }
 }

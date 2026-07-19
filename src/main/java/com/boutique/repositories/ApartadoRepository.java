@@ -11,14 +11,18 @@ public class ApartadoRepository {
 
     public List<Apartado> listarTodos() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Apartado ORDER BY fechaApartado DESC", Apartado.class).list();
+            return session.createQuery(
+                "SELECT a FROM Apartado a LEFT JOIN FETCH a.detalles da LEFT JOIN FETCH da.producto " +
+                "LEFT JOIN FETCH a.cliente LEFT JOIN FETCH a.empleado LEFT JOIN FETCH a.abonos " +
+                "ORDER BY a.fechaApartado DESC", Apartado.class).list();
         }
     }
 
     public Optional<Apartado> buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.<Apartado>createQuery(
-                "SELECT a FROM Apartado a LEFT JOIN FETCH a.abonos WHERE a.id = :id",
+                "SELECT a FROM Apartado a LEFT JOIN FETCH a.detalles da LEFT JOIN FETCH da.producto " +
+                "LEFT JOIN FETCH a.cliente LEFT JOIN FETCH a.empleado LEFT JOIN FETCH a.abonos WHERE a.id = :id",
                 Apartado.class)
                 .setParameter("id", id)
                 .uniqueResultOptional();
@@ -28,8 +32,9 @@ public class ApartadoRepository {
     public List<Apartado> buscarPorCliente(int clienteId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                "FROM Apartado WHERE cliente.id = :clienteId ORDER BY fechaApartado DESC",
-                Apartado.class)
+                "SELECT a FROM Apartado a LEFT JOIN FETCH a.detalles da LEFT JOIN FETCH da.producto " +
+                "LEFT JOIN FETCH a.cliente LEFT JOIN FETCH a.empleado LEFT JOIN FETCH a.abonos " +
+                "WHERE a.cliente.id = :clienteId ORDER BY a.fechaApartado DESC", Apartado.class)
                 .setParameter("clienteId", clienteId)
                 .list();
         }
@@ -38,8 +43,9 @@ public class ApartadoRepository {
     public List<Apartado> buscarPorEstado(Apartado.EstadoApartado estado) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                "FROM Apartado WHERE estado = :estado ORDER BY fechaApartado DESC",
-                Apartado.class)
+                "SELECT a FROM Apartado a LEFT JOIN FETCH a.detalles da LEFT JOIN FETCH da.producto " +
+                "LEFT JOIN FETCH a.cliente LEFT JOIN FETCH a.empleado LEFT JOIN FETCH a.abonos " +
+                "WHERE a.estado = :estado ORDER BY a.fechaApartado DESC", Apartado.class)
                 .setParameter("estado", estado)
                 .list();
         }
