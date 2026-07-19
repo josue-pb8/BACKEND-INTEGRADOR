@@ -34,6 +34,21 @@ CREATE TABLE clientes (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
+-- Empleados
+CREATE TABLE empleados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL UNIQUE,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE,
+    telefono VARCHAR(20),
+    direccion TEXT,
+    puesto VARCHAR(100),
+    fecha_nacimiento DATE,
+    fecha_contratacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
 -- Categorias
 CREATE TABLE categorias (
     id INT AUTO_INCREMENT PRIMARY KEY,

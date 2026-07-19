@@ -23,8 +23,6 @@ public class Producto {
 
     private String marca;
 
-    @Column(name = "imagen_url")
-    private String imagenUrl;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")
@@ -44,6 +42,19 @@ public class Producto {
         this.categoria = categoria;
     }
 
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "imagen", columnDefinition = "LONGBLOB")
+    private byte[] imagen;
+
+    public byte[] getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
+    }
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -59,8 +70,6 @@ public class Producto {
     public String getMarca() { return marca; }
     public void setMarca(String marca) { this.marca = marca; }
 
-    public String getImagenUrl() { return imagenUrl; }
-    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 
     public Categoria getCategoria() { return categoria; }
     public void setCategoria(Categoria categoria) { this.categoria = categoria; }

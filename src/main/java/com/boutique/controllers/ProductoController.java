@@ -3,6 +3,9 @@ package com.boutique.controllers;
 import com.boutique.models.Producto;
 import com.boutique.services.ProductoService;
 import io.javalin.http.Context;
+import io.javalin.http.UploadedFile;
+
+import java.io.IOException;
 import java.util.List;
 
 public class ProductoController {
@@ -41,6 +44,19 @@ public class ProductoController {
 
     public void crear(Context ctx) {
         Producto producto = ctx.bodyAsClass(Producto.class);
+        try {
+            UploadedFile archivo = ctx.uploadedFile("imagen");
+
+
+            if (archivo != null) {
+                producto.setImagen(archivo.content().readAllBytes());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
         Producto creado = productoService.guardar(producto);
         ctx.status(201).json(creado);
     }

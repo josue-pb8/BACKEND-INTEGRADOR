@@ -32,12 +32,14 @@ public class Main {
         ApartadoController apartadoController = new ApartadoController();
         CarritoController carritoController = new CarritoController();
         EstadisticaController estadisticaController = new EstadisticaController();
+        EmpleadoController empleadoController = new EmpleadoController();
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         Javalin app = Javalin.create(config -> {
+            config.http.maxRequestSize = 20_000_000; // 20 MB
             config.jsonMapper(new JavalinJackson(mapper, true));
 
             config.bundledPlugins.enableCors(cors -> {
@@ -106,6 +108,15 @@ public class Main {
                         post(clienteController::registrar);
                         put("/{id}", clienteController::actualizar);
                     });
+
+                    path("empleados", () -> {
+                        get(empleadoController::listar);
+                        get("/{id}", empleadoController::buscarPorId);
+                        post(empleadoController::registrar);
+                        put("/{id}", empleadoController::actualizar);
+                        delete("/{id}", empleadoController::eliminar);
+                    });
+
 
                     path("apartados", () -> {
                         get(apartadoController::listar);
