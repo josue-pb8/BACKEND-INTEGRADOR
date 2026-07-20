@@ -1,6 +1,8 @@
 package com.boutique.controllers;
 
 import com.boutique.models.Cliente;
+import com.boutique.repositories.ClienteRepository;
+import com.boutique.repositories.UsuarioRepository;
 import com.boutique.services.ClienteService;
 import io.javalin.http.Context;
 import java.util.Map;
@@ -8,6 +10,8 @@ import java.util.Map;
 public class ClienteController {
 
     private final ClienteService clienteService = new ClienteService();
+    private final ClienteRepository clienteRepository = new ClienteRepository();
+    private final UsuarioRepository usuarioRepository = new UsuarioRepository();
 
     public void listar(Context ctx) {
         ctx.json(clienteService.listarTodos());
@@ -56,6 +60,48 @@ public class ClienteController {
             return;
         }
         ctx.json(resultado.get());
+    }
+
+    public void cambiarContrasena(Context ctx) {
+        int id = ctx.pathParamAsClass("id", int.class).get();
+        var body = ctx.bodyAsClass(Map.class);
+
+        String contrasenaActual = (String) body.get("contrasenaActual");
+        String contrasenaNueva = (String) body.get("contrasenaNueva");
+
+        if (contrasenaActual == null || contrasenaActual.isEmpty()) {
+            ctx.status(400).json(Map.of("error", "La contraseña actual es requerida"));
+            return;
+        }
+        if (contrasenaNueva == null || contrasenaNueva.isEmpty()) {
+            ctx.status(400).json(Map.of("error", "La nueva contraseña es requerida"));
+            return;
+        }
+        if (contrasenaNueva.length() < 6) {
+            ctx.status(400).json(Map.of("error", "La nueva contraseña debe tener al menos 6 caracteres"));
+            return;
+        }
+
+        var cliente = clienteRepository.buscarPorId(id);
+        if (cliente.isEmpty()) {
+            ctx.status(404).json(Map.of("error", "Cliente no encontrado"));
+            return;
+        }
+
+        var usuario = usuarioRepository.buscarPorId(cliente.get().getUsuario().getId());
+        if (usuario.isEmpty()) {
+            ctx.status(404).json(Map.of("error", "Usuario no encontrado"));
+            return;
+        }
+
+        if (!usuario.get().getContrasena().equals(contrasenaActual)) {
+            ctx.status(400).json(Map.of("error", "La contraseña actual es incorrecta"));
+            return;
+        }
+
+        usuario.get().setContrasena(contrasenaNueva);
+        usuarioRepository.actualizar(usuario.get());
+        ctx.json(Map.of("mensaje", "Contraseña actualizada correctamente"));
     }
 
     public void perfiles(Context ctx) {

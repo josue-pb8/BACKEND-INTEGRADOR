@@ -53,4 +53,16 @@ public class ApartadoService {
 
         return Optional.of(apartado);
     }
+
+    public Optional<Apartado> cancelar(int apartadoId) {
+        Optional<Apartado> existente = apartadoRepository.buscarPorId(apartadoId);
+        if (existente.isEmpty()) return Optional.empty();
+
+        Apartado apartado = existente.get();
+        if (apartado.getEstado() == Apartado.EstadoApartado.CANCELADO) {
+            return Optional.of(apartado);
+        }
+        apartado.setEstado(Apartado.EstadoApartado.CANCELADO);
+        return Optional.of(apartadoRepository.actualizar(apartado));
+    }
 }

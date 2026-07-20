@@ -63,6 +63,7 @@ public class Main {
                         get("/buscar", productoController::buscar);
                         get("/filtrar", productoController::filtrar);
                         get("/{id}", productoController::buscarPorId);
+                        get("/{id}/imagen", productoController::buscarImagen);
                         post(withAuth(new JwtMiddleware("ADMIN"), productoController::crear));
                         put("/{id}", withAuth(new JwtMiddleware("ADMIN"), productoController::actualizar));
                         delete("/{id}", withAuth(new JwtMiddleware("ADMIN"), productoController::eliminar));
@@ -99,7 +100,7 @@ public class Main {
                         get("/historial/{empleadoId}", withAuth(new JwtMiddleware(null), ventaController::historialEmpleado));
                         get("/cliente/{clienteId}", withAuth(new JwtMiddleware(null), ventaController::historialCliente));
                         get("/{id}", ventaController::buscarPorId);
-                        post(withAuth(new JwtMiddleware("EMPLEADO"), ventaController::registrar));
+                        post(withAuth(new JwtMiddleware(null), ventaController::registrar));
                     });
 
                     path("clientes", () -> {
@@ -108,6 +109,7 @@ public class Main {
                         get("/{id}", clienteController::buscarPorId);
                         post(clienteController::registrar);
                         put("/{id}", clienteController::actualizar);
+                        put("/{id}/contrasena", clienteController::cambiarContrasena);
 
                         post("/roles", clienteController::perfiles);
                     });
@@ -125,8 +127,9 @@ public class Main {
                         get(apartadoController::listar);
                         get("/cliente/{clienteId}", apartadoController::buscarPorCliente);
                         get("/{id}", apartadoController::buscarPorId);
-                        post(withAuth(new JwtMiddleware("EMPLEADO"), apartadoController::registrar));
+                        post(withAuth(new JwtMiddleware(null), apartadoController::registrar));
                         put("/{id}/abono", withAuth(new JwtMiddleware(null), apartadoController::registrarAbono));
+                        put("/{id}/cancelar", withAuth(new JwtMiddleware(null), apartadoController::cancelar));
                     });
 
                     path("carrito", () -> {

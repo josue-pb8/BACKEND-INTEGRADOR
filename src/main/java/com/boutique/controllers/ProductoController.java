@@ -72,6 +72,16 @@ public class ProductoController {
         ctx.json(resultado.get());
     }
 
+    public void buscarImagen(Context ctx) {
+        int id = ctx.pathParamAsClass("id", int.class).get();
+        var producto = productoService.buscarPorId(id);
+        if (producto.isEmpty() || producto.get().getImagen() == null) {
+            ctx.status(404);
+            return;
+        }
+        ctx.contentType("image/jpeg").result(producto.get().getImagen());
+    }
+
     public void eliminar(Context ctx) {
         int id = ctx.pathParamAsClass("id", int.class).get();
         boolean eliminado = productoService.eliminar(id);

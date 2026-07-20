@@ -47,7 +47,7 @@ public class ProductoService {
         if (datos.getDescripcion() != null) producto.setDescripcion(datos.getDescripcion());
         if (datos.getPrecio() != null) producto.setPrecio(datos.getPrecio());
         if (datos.getMarca() != null) producto.setMarca(datos.getMarca());
-        //if (datos.getImagenUrl() != null) producto.setImagenUrl(datos.getImagenUrl());
+        if (datos.getImagen() != null) producto.setImagen(datos.getImagen());
         if (datos.getCategoria() != null) producto.setCategoria(datos.getCategoria());
 
         return Optional.of(productoRepository.actualizar(producto));

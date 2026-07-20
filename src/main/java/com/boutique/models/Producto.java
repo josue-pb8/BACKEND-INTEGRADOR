@@ -1,5 +1,6 @@
 package com.boutique.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,7 +46,15 @@ public class Producto {
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "imagen", columnDefinition = "LONGBLOB")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private byte[] imagen;
+
+    @Transient
+    @JsonProperty("imagenUrl")
+    public String getImagenUrl() {
+        if (imagen == null) return null;
+        return "/api/productos/" + id + "/imagen";
+    }
 
     public byte[] getImagen() {
         return imagen;

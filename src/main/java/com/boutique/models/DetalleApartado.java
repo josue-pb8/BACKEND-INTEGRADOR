@@ -26,6 +26,8 @@ public class DetalleApartado {
     @Column(name = "precio_unitario", nullable = false)
     private BigDecimal precioUnitario;
 
+    private String talla;
+
     public DetalleApartado() {}
 
     public DetalleApartado(Apartado apartado, Producto producto, int cantidad, BigDecimal precioUnitario) {
@@ -49,6 +51,9 @@ public class DetalleApartado {
 
     public BigDecimal getPrecioUnitario() { return precioUnitario; }
     public void setPrecioUnitario(BigDecimal precioUnitario) { this.precioUnitario = precioUnitario; }
+
+    public String getTalla() { return talla; }
+    public void setTalla(String talla) { this.talla = talla; }
 
     public BigDecimal getSubtotal() {
         return precioUnitario.multiply(BigDecimal.valueOf(cantidad));

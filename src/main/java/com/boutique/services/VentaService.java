@@ -38,17 +38,19 @@ public class VentaService {
     public Venta registrarVenta(Venta venta, List<DetalleVenta> detalles) {
         for (DetalleVenta detalle : detalles) {
             List<Inventario> variantes = inventarioRepository.buscarPorProducto(detalle.getProducto().getId());
-            boolean stockDescontado = false;
-            for (Inventario inv : variantes) {
-                if (inv.getStock() >= detalle.getCantidad()) {
-                    inv.setStock(inv.getStock() - detalle.getCantidad());
-                    inventarioRepository.actualizar(inv);
-                    stockDescontado = true;
-                    break;
+            if (!variantes.isEmpty()) {
+                boolean stockDescontado = false;
+                for (Inventario inv : variantes) {
+                    if (inv.getStock() >= detalle.getCantidad()) {
+                        inv.setStock(inv.getStock() - detalle.getCantidad());
+                        inventarioRepository.actualizar(inv);
+                        stockDescontado = true;
+                        break;
+                    }
                 }
-            }
-            if (!stockDescontado) {
-                throw new RuntimeException("Stock insuficiente para el producto: " + detalle.getProducto().getNombre());
+                if (!stockDescontado) {
+                    throw new RuntimeException("Stock insuficiente para el producto: " + detalle.getProducto().getNombre());
+                }
             }
             detalle.setVenta(venta);
         }
