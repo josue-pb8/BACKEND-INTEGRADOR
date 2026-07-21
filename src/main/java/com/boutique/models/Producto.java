@@ -24,6 +24,10 @@ public class Producto {
 
     private String marca;
 
+    // Se mapea con la columna real de la BD: 'imagen_url'
+    @Column(name = "imagen_url", length = 500)
+    @JsonProperty("imagenUrl")
+    private String imagenUrl;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")
@@ -32,10 +36,11 @@ public class Producto {
     @Column(nullable = false)
     private boolean activo = true;
 
-    @Column(name = "fecha_creacion")
-    private LocalDateTime fechaCreacion = LocalDateTime.now();
+    @Column(name = "fecha_creacion", insertable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
 
-    public Producto() {}
+    public Producto() {
+    }
 
     public Producto(String nombre, BigDecimal precio, Categoria categoria) {
         this.nombre = nombre;
@@ -43,49 +48,76 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "imagen", columnDefinition = "LONGBLOB")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private byte[] imagen;
+    // Getters y Setters
+    public int getId() {
+        return id;
+    }
 
-    @Transient
-    @JsonProperty("imagenUrl")
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
     public String getImagenUrl() {
-        if (imagen == null) return null;
-        return "/api/productos/" + id + "/imagen";
+        return imagenUrl;
     }
 
-    public byte[] getImagen() {
-        return imagen;
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
     }
 
-    public void setImagen(byte[] imagen) {
-        this.imagen = imagen;
+    public Categoria getCategoria() {
+        return categoria;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public boolean isActivo() {
+        return activo;
+    }
 
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 
-    public BigDecimal getPrecio() { return precio; }
-    public void setPrecio(BigDecimal precio) { this.precio = precio; }
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
 
-    public String getMarca() { return marca; }
-    public void setMarca(String marca) { this.marca = marca; }
-
-
-    public Categoria getCategoria() { return categoria; }
-    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
-
-    public boolean isActivo() { return activo; }
-    public void setActivo(boolean activo) { this.activo = activo; }
-
-    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
 }
