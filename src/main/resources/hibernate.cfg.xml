@@ -3,15 +3,19 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
+        <!-- Driver y Conexión usando la IP Privada de MySQL -->
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/boutique_moda</property>
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">root</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.url">jdbc:mysql://172.31.20.107:3306/boutique_moda?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC</property>
+        <property name="hibernate.connection.username">BaseDeDatos</property>
+        <property name="hibernate.connection.password">123456789</property>
+
+        <!-- Dialecto y Configuración de Hibernate -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
 
+        <!-- Clases Entidad Mapeadas -->
         <mapping class="com.boutique.models.Usuario"/>
         <mapping class="com.boutique.models.Producto"/>
         <mapping class="com.boutique.models.Categoria"/>
@@ -26,6 +30,5 @@
         <mapping class="com.boutique.models.MetodoPago"/>
         <mapping class="com.boutique.models.Rol"/>
         <mapping class="com.boutique.models.Abono"/>
-        <mapping class="com.boutique.models.Empleado"/>
     </session-factory>
 </hibernate-configuration>
