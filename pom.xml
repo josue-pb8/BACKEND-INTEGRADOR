@@ -73,7 +73,7 @@
                 <archive>
                     <manifest>
                         <!-- CAMBIA ESTO por tu clase principal completa -->
-                        <mainClass>com.tuempresa.Main</mainClass>
+                        <mainClass>com.boutique.Main</mainClass>
                     </manifest>
                 </archive>
             </configuration>
