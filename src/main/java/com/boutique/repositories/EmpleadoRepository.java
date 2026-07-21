@@ -1,71 +1,70 @@
 package com.boutique.repositories;
 
 import com.boutique.config.HibernateUtil;
-import com.boutique.models.Cliente;
-import com.boutique.models.Rol;
+import com.boutique.models.Empleado;
 import com.boutique.models.Usuario;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import java.util.List;
 import java.util.Optional;
 
-public class ClienteRepository {
+public class EmpleadoRepository {
 
-    public List<Cliente> listarTodos() {
+    public List<Empleado> listarTodos() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Cliente", Cliente.class).list();
+            return session.createQuery("FROM Empleado", Empleado.class).list();
         }
     }
 
-    public Optional<Cliente> buscarPorId(int id) {
+    public Optional<Empleado> buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Cliente cliente = session.get(Cliente.class, id);
-            return Optional.ofNullable(cliente);
+            Empleado empleado = session.get(Empleado.class, id);
+            return Optional.ofNullable(empleado);
         }
     }
 
-    public Optional<Cliente> buscarPorUsuarioId(int usuarioId) {
+    public Optional<Empleado> buscarPorUsuarioId(int usuarioId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.<Cliente>createQuery(
-                "FROM Cliente c WHERE c.usuario.id = :usuarioId", Cliente.class)
+            return session.<Empleado>createQuery(
+                "FROM Empleado e WHERE e.usuario.id = :usuarioId", Empleado.class)
                 .setParameter("usuarioId", usuarioId)
                 .uniqueResultOptional();
         }
     }
 
-    public Cliente guardar(Cliente cliente) {
+    public Empleado guardar(Empleado empleado) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.persist(cliente);
+            session.persist(empleado);
             tx.commit();
-            return cliente;
+            return empleado;
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
         }
     }
 
-    public Cliente guardarClienteConUsuario(Usuario usuario, Cliente cliente) {
+    public Empleado guardarEmpleadoConUsuario(Usuario usuario, Empleado empleado) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             session.persist(usuario);
-            cliente.setUsuario(usuario);
-            session.persist(cliente);
+            empleado.setUsuario(usuario);
+            session.persist(empleado);
             tx.commit();
-            return cliente;
+            return empleado;
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
         }
     }
 
-    public Cliente actualizar(Cliente cliente) {
+    public Empleado actualizar(Empleado empleado) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Cliente merged = session.merge(cliente);
+            Empleado merged = session.merge(empleado);
             tx.commit();
             return merged;
         } catch (Exception e) {
@@ -74,16 +73,18 @@ public class ClienteRepository {
         }
     }
 
-    public List<Rol> listarPerfiles() {
+    public void eliminar(int id) {
+        Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Rol", Rol.class).list();
-        }
-    }
-
-    public Rol buscarRolId(int id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Rol r_ = session.get(Rol.class, id);
-            return r_;
+            tx = session.beginTransaction();
+            Empleado empleado = session.get(Empleado.class, id);
+            if (empleado != null) {
+                session.remove(empleado);
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            throw e;
         }
     }
 }

@@ -38,44 +38,61 @@ public class ApartadoController {
     }
 
     public void registrar(Context ctx) {
-        var body = ctx.bodyAsClass(Map.class);
+        try {
+            var body = ctx.bodyAsClass(Map.class);
 
-        if (body.get("clienteId") == null || body.get("empleadoId") == null || body.get("detalles") == null) {
-            ctx.status(400).json(Map.of("error", "Faltan campos requeridos: clienteId, empleadoId, detalles"));
-            return;
-        }
-
-        Apartado apartado = new Apartado();
-        clienteRepository.buscarPorId(((Number) body.get("clienteId")).intValue())
-            .ifPresent(apartado::setCliente);
-        usuarioRepository.buscarPorId(((Number) body.get("empleadoId")).intValue())
-            .ifPresent(apartado::setEmpleado);
-
-        List<Map<String, Object>> items = (List<Map<String, Object>>) body.get("detalles");
-        List<DetalleApartado> detalles = new ArrayList<>();
-        if (items != null) {
-            for (Map<String, Object> item : items) {
-                if (item.get("productoId") == null || item.get("cantidad") == null || item.get("precioUnitario") == null) {
-                    continue;
-                }
-                var producto = productoRepository.buscarPorId(((Number) item.get("productoId")).intValue());
-                if (producto.isEmpty()) continue;
-
-                DetalleApartado da = new DetalleApartado();
-                da.setProducto(producto.get());
-                da.setCantidad(((Number) item.get("cantidad")).intValue());
-                da.setPrecioUnitario(new BigDecimal(item.get("precioUnitario").toString()));
-                detalles.add(da);
+            if (body.get("clienteId") == null || body.get("empleadoId") == null || body.get("detalles") == null) {
+                ctx.status(400).json(Map.of("error", "Faltan campos requeridos: clienteId, empleadoId, detalles"));
+                return;
             }
-        }
 
-        if (detalles.isEmpty()) {
-            ctx.status(400).json(Map.of("error", "No se encontraron productos válidos en los detalles"));
-            return;
-        }
+            Apartado apartado = new Apartado();
+            clienteRepository.buscarPorId(((Number) body.get("clienteId")).intValue())
+                .ifPresent(apartado::setCliente);
+            usuarioRepository.buscarPorId(((Number) body.get("empleadoId")).intValue())
+                .ifPresent(apartado::setEmpleado);
 
-        Apartado registrado = apartadoService.registrarApartado(apartado, detalles);
-        ctx.status(201).json(registrado);
+            List<Map<String, Object>> items = (List<Map<String, Object>>) body.get("detalles");
+            List<DetalleApartado> detalles = new ArrayList<>();
+            if (items != null) {
+                for (Map<String, Object> item : items) {
+                    if (item.get("productoId") == null || item.get("cantidad") == null || item.get("precioUnitario") == null) {
+                        continue;
+                    }
+                    var producto = productoRepository.buscarPorId(((Number) item.get("productoId")).intValue());
+                    if (producto.isEmpty()) continue;
+
+                    DetalleApartado da = new DetalleApartado();
+                    da.setProducto(producto.get());
+                    da.setCantidad(((Number) item.get("cantidad")).intValue());
+                    da.setPrecioUnitario(new BigDecimal(item.get("precioUnitario").toString()));
+                    if (item.get("talla") != null) {
+                        da.setTalla(item.get("talla").toString());
+                    }
+                    detalles.add(da);
+                }
+            }
+
+            if (detalles.isEmpty()) {
+                ctx.status(400).json(Map.of("error", "No se encontraron productos válidos en los detalles"));
+                return;
+            }
+
+            if (apartado.getCliente() == null) {
+                ctx.status(400).json(Map.of("error", "Cliente no encontrado con el ID proporcionado"));
+                return;
+            }
+            if (apartado.getEmpleado() == null) {
+                ctx.status(400).json(Map.of("error", "Empleado no encontrado con el ID proporcionado"));
+                return;
+            }
+
+            Apartado registrado = apartadoService.registrarApartado(apartado, detalles);
+            ctx.status(201).json(registrado);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.status(500).json(Map.of("error", "Error al registrar apartado: " + e.getMessage()));
+        }
     }
 
     public void registrarAbono(Context ctx) {
@@ -89,6 +106,16 @@ public class ApartadoController {
 
         BigDecimal monto = new BigDecimal(body.get("monto").toString());
         var resultado = apartadoService.registrarAbono(id, monto);
+        if (resultado.isEmpty()) {
+            ctx.status(404).json(Map.of("error", "Apartado no encontrado"));
+            return;
+        }
+        ctx.json(resultado.get());
+    }
+
+    public void cancelar(Context ctx) {
+        int id = ctx.pathParamAsClass("id", int.class).get();
+        var resultado = apartadoService.cancelar(id);
         if (resultado.isEmpty()) {
             ctx.status(404).json(Map.of("error", "Apartado no encontrado"));
             return;

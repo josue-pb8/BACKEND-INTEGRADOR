@@ -14,6 +14,7 @@ public class Abono {
 
     @ManyToOne
     @JoinColumn(name = "apartado_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Apartado apartado;
 
     @Column(nullable = false)

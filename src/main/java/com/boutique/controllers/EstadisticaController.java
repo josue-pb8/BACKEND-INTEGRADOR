@@ -8,10 +8,10 @@ public class EstadisticaController {
     private final EstadisticaService estadisticaService = new EstadisticaService();
 
     public void ventasMensuales(Context ctx) {
-        Integer mes = ctx.queryParamAsClass("mes", Integer.class).get();
-        Integer anio = ctx.queryParamAsClass("anio", Integer.class).get();
-        if (mes == null) mes = java.time.LocalDate.now().getMonthValue();
-        if (anio == null) anio = java.time.LocalDate.now().getYear();
+        String mesStr = ctx.queryParam("mes");
+        String anioStr = ctx.queryParam("anio");
+        int mes = mesStr != null ? Integer.parseInt(mesStr) : java.time.LocalDate.now().getMonthValue();
+        int anio = anioStr != null ? Integer.parseInt(anioStr) : java.time.LocalDate.now().getYear();
         ctx.json(estadisticaService.ventasMensuales(mes, anio));
     }
 
@@ -25,5 +25,25 @@ public class EstadisticaController {
 
     public void metodosPago(Context ctx) {
         ctx.json(estadisticaService.metodosPago());
+    }
+
+    public void clientesNuevos(Context ctx) {
+        ctx.json(estadisticaService.clientesNuevos());
+    }
+
+    public void apartadosActivos(Context ctx) {
+        ctx.json(estadisticaService.apartadosActivos());
+    }
+
+    public void ventasRecientes(Context ctx) {
+        ctx.json(estadisticaService.ventasRecientes());
+    }
+
+    public void ventasSemanales(Context ctx) {
+        ctx.json(estadisticaService.ventasSemanales());
+    }
+
+    public void gananciasSemanales(Context ctx) {
+        ctx.json(estadisticaService.gananciasSemanales());
     }
 }

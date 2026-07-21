@@ -32,12 +32,14 @@ public class Main {
         ApartadoController apartadoController = new ApartadoController();
         CarritoController carritoController = new CarritoController();
         EstadisticaController estadisticaController = new EstadisticaController();
+        EmpleadoController empleadoController = new EmpleadoController();
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         Javalin app = Javalin.create(config -> {
+            config.http.maxRequestSize = 20_000_000; // 20 MB
             config.jsonMapper(new JavalinJackson(mapper, true));
 
             config.bundledPlugins.enableCors(cors -> {
@@ -61,6 +63,7 @@ public class Main {
                         get("/buscar", productoController::buscar);
                         get("/filtrar", productoController::filtrar);
                         get("/{id}", productoController::buscarPorId);
+                        get("/{id}/imagen", productoController::buscarImagen);
                         post(withAuth(new JwtMiddleware("ADMIN"), productoController::crear));
                         put("/{id}", withAuth(new JwtMiddleware("ADMIN"), productoController::actualizar));
                         delete("/{id}", withAuth(new JwtMiddleware("ADMIN"), productoController::eliminar));
@@ -97,22 +100,36 @@ public class Main {
                         get("/historial/{empleadoId}", withAuth(new JwtMiddleware(null), ventaController::historialEmpleado));
                         get("/cliente/{clienteId}", withAuth(new JwtMiddleware(null), ventaController::historialCliente));
                         get("/{id}", ventaController::buscarPorId);
-                        post(withAuth(new JwtMiddleware("EMPLEADO"), ventaController::registrar));
+                        post(withAuth(new JwtMiddleware(null), ventaController::registrar));
                     });
 
                     path("clientes", () -> {
                         get(withAuth(new JwtMiddleware("ADMIN"), clienteController::listar));
+                        get("/por-usuario/{usuarioId}", clienteController::buscarPorUsuarioId);
                         get("/{id}", clienteController::buscarPorId);
                         post(clienteController::registrar);
                         put("/{id}", clienteController::actualizar);
+                        put("/{id}/contrasena", clienteController::cambiarContrasena);
+
+                        post("/roles", clienteController::perfiles);
                     });
+
+                    path("empleados", () -> {
+                        get(empleadoController::listar);
+                        get("/{id}", empleadoController::buscarPorId);
+                        post(empleadoController::registrar);
+                        put("/{id}", empleadoController::actualizar);
+                        delete("/{id}", empleadoController::eliminar);
+                    });
+
 
                     path("apartados", () -> {
                         get(apartadoController::listar);
                         get("/cliente/{clienteId}", apartadoController::buscarPorCliente);
                         get("/{id}", apartadoController::buscarPorId);
-                        post(withAuth(new JwtMiddleware("EMPLEADO"), apartadoController::registrar));
+                        post(withAuth(new JwtMiddleware(null), apartadoController::registrar));
                         put("/{id}/abono", withAuth(new JwtMiddleware(null), apartadoController::registrarAbono));
+                        put("/{id}/cancelar", withAuth(new JwtMiddleware(null), apartadoController::cancelar));
                     });
 
                     path("carrito", () -> {
@@ -129,11 +146,16 @@ public class Main {
                                 estadisticaController::productosMasVendidos));
                         get("/ganancias", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::ganancias));
                         get("/metodos-pago", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::metodosPago));
+                        get("/clientes-nuevos", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::clientesNuevos));
+                        get("/apartados-activos", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::apartadosActivos));
+                        get("/ventas-recientes", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::ventasRecientes));
+                        get("/ventas-semanales", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::ventasSemanales));
+                        get("/ganancias-semanales", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::gananciasSemanales));
                     });
                 });
             });
         }).start(8081);
 
-        System.out.println("Servidor Boutique MODA SYSTEM iniciado en http://localhost:8080");
+        System.out.println("Servidor Boutique MODA SYSTEM iniciado en http://localhost:8081");
     }
 }
