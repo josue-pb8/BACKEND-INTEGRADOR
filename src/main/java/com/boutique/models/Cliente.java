@@ -30,6 +30,9 @@ public class Cliente {
     @Column(columnDefinition = "TEXT")
     private String direccion;
 
+    @Column(name = "foto_url", columnDefinition = "MEDIUMTEXT")
+    private String fotoUrl;
+
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
@@ -64,6 +67,9 @@ public class Cliente {
 
     public String getDireccion() { return direccion; }
     public void setDireccion(String direccion) { this.direccion = direccion; }
+
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 
     public LocalDate getFechaNacimiento() { return fechaNacimiento; }
     public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }

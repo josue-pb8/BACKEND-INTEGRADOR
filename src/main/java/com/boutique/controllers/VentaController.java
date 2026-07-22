@@ -105,4 +105,14 @@ public class VentaController {
         }
         ctx.status(201).json(registrada);
     }
+
+    public void eliminar(Context ctx) {
+        int id = ctx.pathParamAsClass("id", int.class).get();
+        boolean eliminado = ventaService.eliminar(id);
+        if (!eliminado) {
+            ctx.status(404).json(Map.of("error", "Venta no encontrada"));
+            return;
+        }
+        ctx.json(Map.of("mensaje", "Venta eliminada correctamente"));
+    }
 }

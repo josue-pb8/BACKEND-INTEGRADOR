@@ -79,4 +79,19 @@ public class InventarioRepository {
             throw e;
         }
     }
+
+    public boolean eliminar(int id) {
+        Transaction tx = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+            Inventario inv = session.get(Inventario.class, id);
+            if (inv == null) return false;
+            session.remove(inv);
+            tx.commit();
+            return true;
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            throw e;
+        }
+    }
 }

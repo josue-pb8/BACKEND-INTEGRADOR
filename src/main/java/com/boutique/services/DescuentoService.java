@@ -34,6 +34,8 @@ public class DescuentoService {
         if (datos.getPorcentaje() != null) descuento.setPorcentaje(datos.getPorcentaje());
         if (datos.getFechaInicio() != null) descuento.setFechaInicio(datos.getFechaInicio());
         if (datos.getFechaFin() != null) descuento.setFechaFin(datos.getFechaFin());
+        if (datos.getImagenUrl() != null) descuento.setImagenUrl(datos.getImagenUrl());
+        descuento.setActivo(datos.isActivo());
 
         return Optional.of(descuentoRepository.actualizar(descuento));
     }
@@ -45,5 +47,9 @@ public class DescuentoService {
         Descuento descuento = existente.get();
         descuento.setActivo(false);
         return Optional.of(descuentoRepository.actualizar(descuento));
+    }
+
+    public boolean eliminar(int id) {
+        return descuentoRepository.eliminar(id);
     }
 }

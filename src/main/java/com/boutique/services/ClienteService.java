@@ -27,22 +27,24 @@ public class ClienteService {
         return clienteRepository.buscarPorUsuarioId(usuarioId);
     }
 
-    public Cliente registrar(String nombreUsuario, String contrasena, String nombre, String apellido, String email, String telefono, String perfil) {
+    public Cliente registrar(String nombreUsuario, String contrasena, String nombre, String apellido, String email, String telefono, String perfil, java.util.Map<String, Object> extras) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//            Rol rolCliente = session.createQuery("FROM Rol r WHERE r.nombre = 'CLIENTE'", Rol.class)
-//                    .uniqueResult();
-//            if (rolCliente == null) {
-//                throw new RuntimeException("Rol CLIENTE no encontrado en la base de datos");
-//            }
-
             Rol rolCliente = clienteRepository.buscarRolId(Integer.parseInt(perfil));
-
 
             Usuario usuario = new Usuario(nombreUsuario, contrasena, rolCliente);
 
             Cliente cliente = new Cliente(usuario, nombre, apellido);
             cliente.setEmail(email);
             cliente.setTelefono(telefono);
+            if (extras != null) {
+                if (extras.get("direccion") != null) cliente.setDireccion((String) extras.get("direccion"));
+                if (extras.get("fechaNacimiento") != null) {
+                    try {
+                        cliente.setFechaNacimiento(java.time.LocalDate.parse((String) extras.get("fechaNacimiento")));
+                    } catch (Exception ignored) {}
+                }
+                if (extras.get("fotoUrl") != null) cliente.setFotoUrl((String) extras.get("fotoUrl"));
+            }
 
             return clienteRepository.guardarClienteConUsuario(usuario, cliente);
         }
@@ -58,6 +60,8 @@ public class ClienteService {
         if (datos.getEmail() != null) cliente.setEmail(datos.getEmail());
         if (datos.getTelefono() != null) cliente.setTelefono(datos.getTelefono());
         if (datos.getDireccion() != null) cliente.setDireccion(datos.getDireccion());
+        if (datos.getFotoUrl() != null) cliente.setFotoUrl(datos.getFotoUrl());
+        if (datos.getFechaNacimiento() != null) cliente.setFechaNacimiento(datos.getFechaNacimiento());
 
         return Optional.of(clienteRepository.actualizar(cliente));
     }
@@ -76,5 +80,9 @@ public class ClienteService {
 
         return clienteRepository.listarPerfiles();
 
+    }
+
+    public boolean eliminar(int id) {
+        return clienteRepository.eliminar(id);
     }
 }

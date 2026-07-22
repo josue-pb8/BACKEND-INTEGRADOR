@@ -181,4 +181,29 @@ public class EstadisticaService {
                 .toList();
         }
     }
+
+    public List<Map<String, Object>> perdidasSemanales() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            LocalDateTime inicioSemana = LocalDateTime.now().minusDays(7).withHour(0).withMinute(0).withSecond(0);
+            return session.createQuery(
+                "SELECT dv.producto.nombre, " +
+                "COALESCE(SUM(dv.cantidad * (dv.precioUnitario - dv.producto.costo)), 0), " +
+                "COALESCE(SUM(dv.cantidad * dv.producto.costo), 0) " +
+                "FROM DetalleVenta dv JOIN dv.venta v " +
+                "WHERE v.fechaVenta >= :inicio " +
+                "GROUP BY dv.producto.nombre",
+                Object[].class)
+                .setParameter("inicio", inicioSemana)
+                .list()
+                .stream()
+                .map(row -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("producto", row[0]);
+                    map.put("ganancia", row[1]);
+                    map.put("costo", row[2]);
+                    return map;
+                })
+                .toList();
+        }
+    }
 }

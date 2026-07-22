@@ -122,4 +122,14 @@ public class ApartadoController {
         }
         ctx.json(resultado.get());
     }
+
+    public void eliminar(Context ctx) {
+        int id = ctx.pathParamAsClass("id", int.class).get();
+        boolean eliminado = apartadoService.eliminar(id);
+        if (!eliminado) {
+            ctx.status(404).json(Map.of("error", "Apartado no encontrado"));
+            return;
+        }
+        ctx.json(Map.of("mensaje", "Apartado eliminado correctamente"));
+    }
 }

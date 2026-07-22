@@ -53,4 +53,8 @@ public class InventarioService {
         inventarioRepository.actualizar(inv);
         return true;
     }
+
+    public boolean eliminar(int id) {
+        return inventarioRepository.eliminar(id);
+    }
 }

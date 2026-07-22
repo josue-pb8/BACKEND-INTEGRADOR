@@ -1,6 +1,8 @@
 package com.boutique.services;
 
+import com.boutique.models.Categoria;
 import com.boutique.models.Producto;
+import com.boutique.repositories.CategoriaRepository;
 import com.boutique.repositories.ProductoRepository;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +10,7 @@ import java.util.Optional;
 public class ProductoService {
 
     private final ProductoRepository productoRepository = new ProductoRepository();
+    private final CategoriaRepository categoriaRepository = new CategoriaRepository();
 
     public List<Producto> listarTodos() {
         return productoRepository.listarTodos();
@@ -35,6 +38,10 @@ public class ProductoService {
     }
 
     public Producto guardar(Producto producto) {
+        if (producto.getCategoria() != null && producto.getCategoria().getId() > 0) {
+            Optional<Categoria> cat = categoriaRepository.buscarPorId(producto.getCategoria().getId());
+            cat.ifPresent(producto::setCategoria);
+        }
         return productoRepository.guardar(producto);
     }
 
@@ -46,9 +53,13 @@ public class ProductoService {
         if (datos.getNombre() != null) producto.setNombre(datos.getNombre());
         if (datos.getDescripcion() != null) producto.setDescripcion(datos.getDescripcion());
         if (datos.getPrecio() != null) producto.setPrecio(datos.getPrecio());
+        if (datos.getCosto() != null) producto.setCosto(datos.getCosto());
         if (datos.getMarca() != null) producto.setMarca(datos.getMarca());
-        if (datos.getImagen() != null) producto.setImagen(datos.getImagen());
-        if (datos.getCategoria() != null) producto.setCategoria(datos.getCategoria());
+        if (datos.getImagenUrl() != null) producto.setImagenUrl(datos.getImagenUrl());
+        if (datos.getCategoria() != null && datos.getCategoria().getId() > 0) {
+            Optional<Categoria> cat = categoriaRepository.buscarPorId(datos.getCategoria().getId());
+            cat.ifPresent(producto::setCategoria);
+        }
 
         return Optional.of(productoRepository.actualizar(producto));
     }

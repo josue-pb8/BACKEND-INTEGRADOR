@@ -18,19 +18,19 @@ INSERT INTO categorias (nombre, descripcion, activa) VALUES
 ('Zapatos', 'Calzado femenino', TRUE),
 ('Accesorios', 'Bolsas, bisuteria y complementos', TRUE);
 
-INSERT INTO productos (nombre, descripcion, precio, marca, categoria_id, activo) VALUES
-('Vestido Floral Largo', 'Vestido largo con estampado floral, ideal para eventos', 1299.00, 'Bella Moda', 1, TRUE),
-('Vestido Negro Elegante', 'Vestido negro clasico para occasion especial', 1599.00, 'Bella Moda', 1, TRUE),
-('Blusa Seda Blanca', 'Blusa de seda blanca con cuello alto', 599.00, 'Elegance', 2, TRUE),
-('Blusa Rayas Azules', 'Blusa a rayas azul y blanco, estilo marino', 449.00, 'Elegance', 2, TRUE),
-('Jeans Skinny Azul', 'Jeans skinny azul oscuro, tela elastica', 799.00, 'Denim Plus', 3, TRUE),
-('Pantalon Formal Negro', 'Pantalon formal de vestir negro', 899.00, 'Denim Plus', 3, TRUE),
-('Falda Midi Plisada', 'Falda midi plisada color rosa', 549.00, 'Bella Moda', 4, TRUE),
-('Falda Cuero Negra', 'Falda de cuero sintetico negro', 699.00, 'Bella Moda', 4, TRUE),
-('Zapatos Tacón Rojo', 'Zapatos de tacón alto rojo, piel sintetica', 999.00, 'Step Up', 5, TRUE),
-('Bolsa Cuero Marron', 'Bolsa de cuero sintetico color marron', 749.00, 'Access Style', 6, TRUE),
-('Collar Plata Corazon', 'Collar de plata 925 con colgante corazon', 399.00, 'Access Style', 6, TRUE),
-('Aretes Dorados Circulo', 'Aretes dorados circulares elegantes', 299.00, 'Access Style', 6, TRUE);
+INSERT INTO productos (nombre, descripcion, precio, costo, marca, categoria_id, activo) VALUES
+('Vestido Floral Largo', 'Vestido largo con estampado floral, ideal para eventos', 1299.00, 650.00, 'Bella Moda', 1, TRUE),
+('Vestido Negro Elegante', 'Vestido negro clasico para occasion especial', 1599.00, 800.00, 'Bella Moda', 1, TRUE),
+('Blusa Seda Blanca', 'Blusa de seda blanca con cuello alto', 599.00, 280.00, 'Elegance', 2, TRUE),
+('Blusa Rayas Azules', 'Blusa a rayas azul y blanco, estilo marino', 449.00, 200.00, 'Elegance', 2, TRUE),
+('Jeans Skinny Azul', 'Jeans skinny azul oscuro, tela elastica', 799.00, 400.00, 'Denim Plus', 3, TRUE),
+('Pantalon Formal Negro', 'Pantalon formal de vestir negro', 899.00, 450.00, 'Denim Plus', 3, TRUE),
+('Falda Midi Plisada', 'Falda midi plisada color rosa', 549.00, 250.00, 'Bella Moda', 4, TRUE),
+('Falda Cuero Negra', 'Falda de cuero sintetico negro', 699.00, 320.00, 'Bella Moda', 4, TRUE),
+('Zapatos Tacón Rojo', 'Zapatos de tacón alto rojo, piel sintetica', 999.00, 500.00, 'Step Up', 5, TRUE),
+('Bolsa Cuero Marron', 'Bolsa de cuero sintetico color marron', 749.00, 350.00, 'Access Style', 6, TRUE),
+('Collar Plata Corazon', 'Collar de plata 925 con colgante corazon', 399.00, 180.00, 'Access Style', 6, TRUE),
+('Aretes Dorados Circulo', 'Aretes dorados circulares elegantes', 299.00, 120.00, 'Access Style', 6, TRUE);
 
 INSERT INTO inventario (producto_id, talla, color, stock, stock_minimo) VALUES
 (1, 'S', 'Floral', 10, 3),

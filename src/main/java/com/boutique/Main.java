@@ -32,6 +32,7 @@ public class Main {
         ApartadoController apartadoController = new ApartadoController();
         CarritoController carritoController = new CarritoController();
         EstadisticaController estadisticaController = new EstadisticaController();
+        MetodoPagoController metodoPagoController = new MetodoPagoController();
         EmpleadoController empleadoController = new EmpleadoController();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -39,7 +40,7 @@ public class Main {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         Javalin app = Javalin.create(config -> {
-            config.http.maxRequestSize = 20_000_000; // 20 MB
+            config.http.maxRequestSize = 20_000_000;
             config.jsonMapper(new JavalinJackson(mapper, true));
 
             config.bundledPlugins.enableCors(cors -> {
@@ -84,6 +85,11 @@ public class Main {
                         post(withAuth(new JwtMiddleware("ADMIN"), descuentoController::crear));
                         put("/{id}", withAuth(new JwtMiddleware("ADMIN"), descuentoController::actualizar));
                         put("/{id}/finalizar", withAuth(new JwtMiddleware("ADMIN"), descuentoController::finalizar));
+                        delete("/{id}", withAuth(new JwtMiddleware("ADMIN"), descuentoController::eliminar));
+                    });
+
+                    path("metodos-pago", () -> {
+                        get(metodoPagoController::listar);
                     });
 
                     path("inventario", () -> {
@@ -92,6 +98,7 @@ public class Main {
                         get("/producto/{productoId}", inventarioController::buscarPorProducto);
                         post(withAuth(new JwtMiddleware("ADMIN"), inventarioController::crear));
                         put("/{id}", withAuth(new JwtMiddleware("ADMIN"), inventarioController::actualizarStock));
+                        delete("/{id}", withAuth(new JwtMiddleware("ADMIN"), inventarioController::eliminar));
                     });
 
                     path("ventas", () -> {
@@ -100,7 +107,8 @@ public class Main {
                         get("/historial/{empleadoId}", withAuth(new JwtMiddleware(null), ventaController::historialEmpleado));
                         get("/cliente/{clienteId}", withAuth(new JwtMiddleware(null), ventaController::historialCliente));
                         get("/{id}", ventaController::buscarPorId);
-                        post(withAuth(new JwtMiddleware(null), ventaController::registrar));
+                        post(withAuth(new JwtMiddleware("EMPLEADO"), ventaController::registrar));
+                        delete("/{id}", withAuth(new JwtMiddleware("ADMIN"), ventaController::eliminar));
                     });
 
                     path("clientes", () -> {
@@ -110,6 +118,7 @@ public class Main {
                         post(clienteController::registrar);
                         put("/{id}", clienteController::actualizar);
                         put("/{id}/contrasena", clienteController::cambiarContrasena);
+                        delete("/{id}", withAuth(new JwtMiddleware("ADMIN"), clienteController::eliminar));
 
                         post("/roles", clienteController::perfiles);
                     });
@@ -122,7 +131,6 @@ public class Main {
                         delete("/{id}", empleadoController::eliminar);
                     });
 
-
                     path("apartados", () -> {
                         get(apartadoController::listar);
                         get("/cliente/{clienteId}", apartadoController::buscarPorCliente);
@@ -130,6 +138,7 @@ public class Main {
                         post(withAuth(new JwtMiddleware(null), apartadoController::registrar));
                         put("/{id}/abono", withAuth(new JwtMiddleware(null), apartadoController::registrarAbono));
                         put("/{id}/cancelar", withAuth(new JwtMiddleware(null), apartadoController::cancelar));
+                        delete("/{id}", withAuth(new JwtMiddleware("ADMIN"), apartadoController::eliminar));
                     });
 
                     path("carrito", () -> {
@@ -151,6 +160,7 @@ public class Main {
                         get("/ventas-recientes", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::ventasRecientes));
                         get("/ventas-semanales", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::ventasSemanales));
                         get("/ganancias-semanales", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::gananciasSemanales));
+                        get("/perdidas-semanales", withAuth(new JwtMiddleware("ADMIN"), estadisticaController::perdidasSemanales));
                     });
                 });
             });

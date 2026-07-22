@@ -46,7 +46,8 @@ public class ClienteController {
             (String) body.get("apellido"),
             (String) body.get("email"),
             (String) body.get("telefono"),
-            (String) body.get("perfil")
+            (String) body.get("perfil"),
+            body
         );
         ctx.status(201).json(cliente);
     }
@@ -106,5 +107,15 @@ public class ClienteController {
 
     public void perfiles(Context ctx) {
         ctx.json(clienteService.listarPerfiles());
+    }
+
+    public void eliminar(Context ctx) {
+        int id = ctx.pathParamAsClass("id", int.class).get();
+        boolean eliminado = clienteService.eliminar(id);
+        if (!eliminado) {
+            ctx.status(404).json(Map.of("error", "Cliente no encontrado"));
+            return;
+        }
+        ctx.json(Map.of("mensaje", "Cliente eliminado correctamente"));
     }
 }

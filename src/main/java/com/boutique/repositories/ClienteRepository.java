@@ -86,4 +86,20 @@ public class ClienteRepository {
             return r_;
         }
     }
+
+    public boolean eliminar(int id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            var transaction = session.beginTransaction();
+            try {
+                Cliente cliente = session.get(Cliente.class, id);
+                if (cliente == null) return false;
+                session.remove(cliente);
+                transaction.commit();
+                return true;
+            } catch (Exception e) {
+                transaction.rollback();
+                throw e;
+            }
+        }
+    }
 }

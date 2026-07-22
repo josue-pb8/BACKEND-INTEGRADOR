@@ -95,4 +95,20 @@ public class ApartadoRepository {
             throw e;
         }
     }
+
+    public boolean eliminar(int id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            var transaction = session.beginTransaction();
+            try {
+                Apartado apartado = session.get(Apartado.class, id);
+                if (apartado == null) return false;
+                session.remove(apartado);
+                transaction.commit();
+                return true;
+            } catch (Exception e) {
+                transaction.rollback();
+                throw e;
+            }
+        }
+    }
 }

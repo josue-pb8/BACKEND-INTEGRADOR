@@ -65,4 +65,9 @@ public class ApartadoService {
         apartado.setEstado(Apartado.EstadoApartado.CANCELADO);
         return Optional.of(apartadoRepository.actualizar(apartado));
     }
+
+    public boolean eliminar(int id) {
+        return apartadoRepository.eliminar(id);
+    }
+    }
 }

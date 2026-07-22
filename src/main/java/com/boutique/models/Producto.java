@@ -22,10 +22,12 @@ public class Producto {
     @Column(nullable = false)
     private BigDecimal precio;
 
+    @Column(columnDefinition = "DECIMAL(10,2) DEFAULT 0")
+    private BigDecimal costo = java.math.BigDecimal.ZERO;
+
     private String marca;
 
-    // Se mapea con la columna real de la BD: 'imagen_url'
-    @Column(name = "imagen_url", length = 500)
+    @Column(name = "imagen_url", columnDefinition = "MEDIUMTEXT")
     @JsonProperty("imagenUrl")
     private String imagenUrl;
 
@@ -68,6 +70,9 @@ public class Producto {
     public String getDescripcion() {
         return descripcion;
     }
+
+    public BigDecimal getCosto() { return costo; }
+    public void setCosto(BigDecimal costo) { this.costo = costo; }
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;

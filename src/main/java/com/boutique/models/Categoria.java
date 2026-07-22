@@ -16,6 +16,9 @@ public class Categoria {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
+    @Column(name = "imagen_url", columnDefinition = "MEDIUMTEXT")
+    private String imagenUrl;
+
     @Column(nullable = false)
     private boolean activa = true;
 
@@ -34,6 +37,9 @@ public class Categoria {
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 
     public boolean isActiva() { return activa; }
     public void setActiva(boolean activa) { this.activa = activa; }

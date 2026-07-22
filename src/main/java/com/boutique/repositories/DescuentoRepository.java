@@ -58,4 +58,20 @@ public class DescuentoRepository {
             throw e;
         }
     }
+
+    public boolean eliminar(int id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            var transaction = session.beginTransaction();
+            try {
+                Descuento descuento = session.get(Descuento.class, id);
+                if (descuento == null) return false;
+                session.remove(descuento);
+                transaction.commit();
+                return true;
+            } catch (Exception e) {
+                transaction.rollback();
+                throw e;
+            }
+        }
+    }
 }

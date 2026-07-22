@@ -28,6 +28,8 @@ public class CategoriaService {
         Categoria categoria = existente.get();
         if (datos.getNombre() != null) categoria.setNombre(datos.getNombre());
         if (datos.getDescripcion() != null) categoria.setDescripcion(datos.getDescripcion());
+        if (datos.getImagenUrl() != null) categoria.setImagenUrl(datos.getImagenUrl());
+        categoria.setActiva(datos.isActiva());
 
         return Optional.of(categoriaRepository.actualizar(categoria));
     }

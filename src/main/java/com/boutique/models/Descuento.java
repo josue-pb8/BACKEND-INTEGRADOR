@@ -27,6 +27,9 @@ public class Descuento {
     @Column(nullable = false)
     private boolean activo = true;
 
+    @Column(name = "imagen_url", columnDefinition = "MEDIUMTEXT")
+    private String imagenUrl;
+
     public Descuento() {}
 
     public Descuento(String nombre, BigDecimal porcentaje, LocalDate fechaInicio, LocalDate fechaFin) {
@@ -53,4 +56,7 @@ public class Descuento {
 
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
+
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 }

@@ -76,4 +76,20 @@ public class VentaRepository {
             throw e;
         }
     }
+
+    public boolean eliminar(int id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            var transaction = session.beginTransaction();
+            try {
+                Venta venta = session.get(Venta.class, id);
+                if (venta == null) return false;
+                session.remove(venta);
+                transaction.commit();
+                return true;
+            } catch (Exception e) {
+                transaction.rollback();
+                throw e;
+            }
+        }
+    }
 }

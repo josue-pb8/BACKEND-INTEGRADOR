@@ -57,4 +57,8 @@ public class VentaService {
         venta.setDetalles(detalles);
         return ventaRepository.guardar(venta);
     }
+
+    public boolean eliminar(int id) {
+        return ventaRepository.eliminar(id);
+    }
 }

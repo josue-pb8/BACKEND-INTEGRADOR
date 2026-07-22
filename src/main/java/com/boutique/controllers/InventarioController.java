@@ -38,4 +38,14 @@ public class InventarioController {
         }
         ctx.json(resultado.get());
     }
+
+    public void eliminar(Context ctx) {
+        int id = ctx.pathParamAsClass("id", int.class).get();
+        boolean eliminado = inventarioService.eliminar(id);
+        if (!eliminado) {
+            ctx.status(404).json(java.util.Map.of("error", "Registro de inventario no encontrado"));
+            return;
+        }
+        ctx.json(java.util.Map.of("mensaje", "Registro de inventario eliminado correctamente"));
+    }
 }

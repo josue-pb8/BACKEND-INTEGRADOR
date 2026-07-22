@@ -52,4 +52,14 @@ public class DescuentoController {
         }
         ctx.json(java.util.Map.of("mensaje", "Descuento finalizado correctamente"));
     }
+
+    public void eliminar(Context ctx) {
+        int id = ctx.pathParamAsClass("id", int.class).get();
+        boolean eliminado = descuentoService.eliminar(id);
+        if (!eliminado) {
+            ctx.status(404).json(java.util.Map.of("error", "Descuento no encontrado"));
+            return;
+        }
+        ctx.json(java.util.Map.of("mensaje", "Descuento eliminado correctamente"));
+    }
 }

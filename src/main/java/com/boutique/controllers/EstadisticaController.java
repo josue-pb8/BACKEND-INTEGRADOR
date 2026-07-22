@@ -46,4 +46,8 @@ public class EstadisticaController {
     public void gananciasSemanales(Context ctx) {
         ctx.json(estadisticaService.gananciasSemanales());
     }
+
+    public void perdidasSemanales(Context ctx) {
+        ctx.json(estadisticaService.perdidasSemanales());
+    }
 }
