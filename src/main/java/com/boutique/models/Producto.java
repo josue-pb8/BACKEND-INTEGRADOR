@@ -120,4 +120,13 @@ public class Producto {
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
+
+    public byte[] getImagen() {
+        return imagenUrl != null ? imagenUrl.getBytes() : null;
+    }
+
+    public void setImagen(byte[] imagen) {
+        this.imagenUrl = imagen != null ? new String(imagen) : null;
+    }
+
 }
